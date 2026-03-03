@@ -1,1 +1,118 @@
+<!DOCTYPE html>
+<html>
 
+<head>
+    <meta charset="UTF-8">
+    <title>Dark Karaoke Mode</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Rain effect */
+        .rain {
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            animation: rainFall linear infinite;
+        }
+
+        @keyframes rainFall {
+            from {
+                transform: translateY(-100vh);
+            }
+
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .word {
+            opacity: 0.3;
+            transition: 0.3s;
+        }
+
+        .active {
+            color: #ff4d6d;
+            text-shadow: 0 0 10px #ff4d6d;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="audio" controls>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container" id="lyrics">
+    </div>
+
+    <script>
+        const lyrics = [
+            { time: 1, text: "Wondering to get a love that is so pure" },
+            { time: 4, text: "Gotta have to always make sure" },
+            { time: 7, text: "That I'm not just somebody's pleasure" },
+        ];
+
+        const container = document.getElementById("lyrics");
+        const audio = document.getElementById("audio");
+
+        lyrics.forEach(line => {
+            let p = document.createElement("p");
+            let words = line.text.split(" ");
+            words.forEach(word => {
+                let span = document.createElement("span");
+                span.textContent = word + " ";
+                span.classList.add("word");
+                p.appendChild(span);
+            });
+            container.appendChild(p);
+        });
+
+        audio.ontimeupdate = () => {
+            const currentTime = audio.currentTime;
+            lyrics.forEach((line, index) => {
+                if (currentTime >= line.time) {
+                    const p = container.children[index];
+                    if (p) {
+                        [...p.children].forEach(word => {
+                            word.classList.add("active");
+                        });
+                    }
+                }
+            });
+        };
+
+        /* Generate rain */
+        for (let i = 0; i < 150; i++) {
+            let drop = document.createElement("div");
+            drop.className = "rain";
+            drop.style.left = Math.random() * 100 + "vw";
+            drop.style.animationDuration = (0.5 + Math.random()) + "s";
+            drop.style.opacity = Math.random();
+            document.body.appendChild(drop);
+        }
+    </script>
+
+</body>
+
+</html>
